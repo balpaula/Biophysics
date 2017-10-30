@@ -12,7 +12,7 @@ from Bio.PDB.PDBParser import PDBParser
 import os
 import sys
 import argparse
-import Structure
+
 
 
 COVLNK = 2.0
