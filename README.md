@@ -1,7 +1,7 @@
 # BioPhysics
 Source codes and data for BioPhysics course on Bioinformatics
 
-## polarcontacs.py
+## polarcontacts.py
 Code for listing polar contacts from a PDB file
 Usage
   python3 polarContacts.py [-h] [--debug] [--backonly] [--nowats] pdb_path
@@ -9,4 +9,3 @@ Usage
 Dependencies
   Bio.PDB.NeighborSearch (BioPython)
   Bio.PDB.PDBParser (Biopython)
-
