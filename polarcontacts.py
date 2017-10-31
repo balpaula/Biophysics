@@ -14,7 +14,6 @@ import sys
 import argparse
 
 
-
 COVLNK = 2.0
 HBLNK  = 3.5
 
@@ -191,7 +190,7 @@ def main():
 #Discard covalents and neighbours
         if (at1-at2) < COVLNK:
             continue
-        if Atom(at2,1).resNum() - Atom(at1,1).resNum() == 1:
+        if at2.get_parent().id[1] - at1.get_parent().id[1] == 1:
             continue
 # remove waters
         if nowats:
@@ -200,7 +199,7 @@ def main():
                 continue
         hblist.append([Atom(at1,1),Atom(at2,1)])
     for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
-        print (hb[0].atid(),hb[1].atid(),hb[0].at-hb[1].at)
+        print ('{:14} {:14} {:6.2f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
         
     
     
