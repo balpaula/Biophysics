@@ -9,7 +9,7 @@ __date__ = "$29-ago-2017 16:14:26$"
 from Bio.PDB.NeighborSearch import NeighborSearch
 from Bio.PDB.PDBParser import PDBParser
 
-import StructureWrappers
+import StWrap
 
 import os
 import sys
@@ -109,9 +109,9 @@ def main():
             if at1.get_parent().get_resname() in waternames \
                 or at2.get_parent().get_resname() in waternames:
                 continue
-        hblist.append([Atom(at1,1),Atom(at2,1)])
+        hblist.append([StWrap.Atom(at1,1),StWrap.Atom(at2,1)])
     for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
-        print ('{:14} {:14} {:6.2f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
+        print ('{:14} {:14} {:6.3f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
         
     
     
