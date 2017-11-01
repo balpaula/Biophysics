@@ -10,8 +10,6 @@ from Bio.PDB.NeighborSearch import NeighborSearch
 from Bio.PDB.PDBParser import PDBParser
 
 import StructureWrapper
-import ForceField
-import ResLib
 
 import os
 import sys
@@ -41,30 +39,14 @@ def main():
         dest='backonly',
         help='Restrict to backbone'
     )
+
     parser.add_argument(
         '--nowats', 
         action='store_true', 
         dest='nowats',
         help='Exclude water molecules'
     )
-    parser.add_argument(
-        '--diel', 
-        type= float,
-        action='store', 
-        dest='diel',
-        default = 1.0,
-        help='Relative dielectric constant'
-    )
-    parser.add_argument(
-        '--vdw',
-        dest='vdwprm',
-        help='Vdw Parameters file'
-    )
-    parser.add_argument(
-        '--rlib',
-        dest='reslib', 
-        help='Residue library'
-    )
+
     parser.add_argument('pdb_path')
     
     args = parser.parse_args()
@@ -77,19 +59,7 @@ def main():
     backonly = args.backonly
     nowats =args.nowats
     pdb_path = args.pdb_path
-    vdwprm = args.vdwprm
-    reslib = args.reslib
-    diel = args.diel
     
-
-    
-    #Load Vdw Parameters
-    ff = ForceField.VdwParamset(vdwprm)
-    print (ff.ntypes,'atom types loaded')
-    #Load res Library
-    rl = ResLib.ResiduesDataLib(reslib)
-    print (rl.nres,'residue types loaded')
-
     if not pdb_path:
         parser.print_help()
         sys.exit(2)        
@@ -137,17 +107,8 @@ def main():
             if at1.get_parent().get_resname() in waternames \
                 or at2.get_parent().get_resname() in waternames:
                 continue
-        Atom1 = StructureWrapper.Atom(
-            at1, 1, 
-            rl.getParams(at1.get_parent().get_resname(),at1.id),
-            ff.atTypes
-        )
-        Atom2 = StructureWrapper.Atom(
-            at2,1,
-            rl.getParams(at2.get_parent().get_resname(),at2.id),
-            ff.atTypes
-        )
-        
+        Atom1 = StructureWrapper.Atom(at1, 1)
+        Atom2 = StructureWrapper.Atom(at2, 1)        
         hblist.append([Atom1,Atom2])
 
     print ()
@@ -162,29 +123,6 @@ def main():
             hb[0].at - hb[1].at
             )
         )
-    print ()
-    print ("Residue interactions")
-    
-    # make list of Residue pairs
-    resList = []
-    for hb in hblist:
-        r1 = StructureWrapper.Residue(hb[0].at.get_parent(),1, ff, rl)
-        r2 = StructureWrapper.Residue(hb[1].at.get_parent(),1, ff, rl)
-        if [r1,r2] not in resList:
-            resList.append([r1,r2])
-    
-    for rpair in sorted(resList, key=lambda i: i[0].resNum()):
-        eint = rpair[0].electrInt(rpair[1],diel)
-        evdw = rpair[0].vdwInt(rpair[1])
-        print (
-            '{:10} {:10} {: 8.4f} {: 8.4f} {: 8.4f}'.format(
-                rpair[0].resid(), 
-                rpair[1].resid(),
-                eint,
-                evdw,
-                eint+evdw)
-        )
-
     
 if __name__ == "__main__":
     main()

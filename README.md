@@ -22,8 +22,7 @@ Library for obtaining amino acid atom types and partial charges (based on AMBER 
 
 Usage:
 
-    python3 polarContacts.py [-h] [--backonly] [--nowats] [--diel E] --vdw vdwprm_file --rlib resLib_file pdb_path
-
+    python3 polarContacts.py [-h] [--backonly] [--nowats] pdb_path
 
 External dependencies
 

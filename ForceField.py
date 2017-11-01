@@ -29,7 +29,6 @@ class AtType():
         self.mass = float(data[3])
         self.fsrf = float(data[4])
         self.rvdw = self.sig * 0.5612
-        self.avdw = 2 * math.sqrt (self.eps) * self.sig**6
-        self.cvdw = 2 * math.sqrt (self.eps) * self.sig**3
+
         
 
