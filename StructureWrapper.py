@@ -1,4 +1,7 @@
-#Appropriate wrappers over BioPython classes
+#
+# Convenient wrappers over BioPython classes
+# Include interaction energies
+#
 
 __author__ = "gelpi"
 __date__ = "$01-nov-2017 7:17:33$"
@@ -18,9 +21,10 @@ class Residue():
         'THR':'T', 'VAL':'V', 'TRP':'W', 'TYR':'Y'
     }  
 
-    def __init__(self, r, useChains=False):
+    def __init__(self, r, useChains=False, rdata={}):
         self.residue = r
         self.useChains = useChains
+        self.rdata = rdata
     
     def resid(self, compact=False):
         if self.useChains:
@@ -71,7 +75,25 @@ class Atom():
     def __init__ (self,at,useChains=False):
          self.at=at
          self.useChains=useChains
+         self.atType=''
+         self.rvdw=0.
+         self.sig=0.
+         self.eps=0.
+         self.mass=0.
+         self.fsrf=0.
+         self.charg = 0
     
+    def addParams(self,atData,atTypeData):
+        self.atType = atData.atType
+        self.rvdw   = atTypeData[self.atType].rvdw
+        self.avdw   = atTypeData[self.atType].avdw
+        self.cvdw   = atTypeData[self.atType].cvdw
+        self.sig    = atTypeData[self.atType].sig
+        self.eps    = atTypeData[self.atType].eps
+        self.mass   = atTypeData[self.atType].mass
+        self.fsrf   = atTypeData[self.atType].fsrf
+        self.charg  = atData.charg
+        
     def atid(self, compact=False):
         return self.resid(compact)+"."+self.at.id
     
@@ -90,3 +112,10 @@ class Atom():
     def __str__(self):
         return self.atid()
 
+    def electrInt (self, other, diel, r):
+        return 332.16 * self.charg * other.charg / diel / r
+    
+    def vdwInt (self, other,r):
+        return (
+            self.avdw*other.avdw/r**12 \
+            - self.cvdw*other.cvdw)/r**6

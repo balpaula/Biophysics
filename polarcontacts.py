@@ -10,6 +10,8 @@ from Bio.PDB.NeighborSearch import NeighborSearch
 from Bio.PDB.PDBParser import PDBParser
 
 import StructureWrapper
+import ForceField
+import ResLib
 
 import os
 import sys
@@ -34,13 +36,6 @@ def main():
             )
 
     parser.add_argument(
-        '--debug', '-d', 
-        action='store_true', 
-        dest='debug',
-        help='Produce DEBUG output'
-    )
-    
-    parser.add_argument(
         '--backonly', 
         action='store_true', 
         dest='backonly',
@@ -52,16 +47,49 @@ def main():
         dest='nowats',
         help='Exclude water molecules'
     )
-
+    parser.add_argument(
+        '--diel', 
+        type= float,
+        action='store', 
+        dest='diel',
+        default = 1.0,
+        help='Relative dielectric constant'
+    )
+    parser.add_argument(
+        '--vdw',
+        dest='vdwprm',
+        help='Vdw Parameters file'
+    )
+    parser.add_argument(
+        '--rlib',
+        dest='reslib', 
+        help='Residue library'
+    )
     parser.add_argument('pdb_path')
     
     args = parser.parse_args()
     
-    debug = args.debug
+    print ("Settings")
+    print ("--------")
+    for k,v in vars(args).items():
+        print ('{:10}:'.format(k),v)
+    
     backonly = args.backonly
     nowats =args.nowats
     pdb_path = args.pdb_path
+    vdwprm = args.vdwprm
+    reslib = args.reslib
+    diel = args.diel
     
+
+    
+    #Load Vdw Parameters
+    ff = ForceField.VdwParamset(vdwprm)
+    print (ff.ntypes,'atom types loaded')
+    #Load res Library
+    rl = ResLib.ResiduesDataLib(reslib)
+    print (rl.nres,'residue types loaded')
+
     if not pdb_path:
         parser.print_help()
         sys.exit(2)        
@@ -109,12 +137,34 @@ def main():
             if at1.get_parent().get_resname() in waternames \
                 or at2.get_parent().get_resname() in waternames:
                 continue
-        hblist.append([StructureWrapper.Atom(at1,1),StructureWrapper.Atom(at2,1)])
-    for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
-        print ('{:14} {:14} {:6.3f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
+        Atom1 = StructureWrapper.Atom(at1,1)
+        Atom1.addParams(rl.getParams(at1.get_parent().get_resname(),at1.id),ff.atTypes)
         
-    
-    
+        Atom2 = StructureWrapper.Atom(at2,1)
+        Atom2.addParams(rl.getParams(at2.get_parent().get_resname(),at2.id),ff.atTypes)
+        
+        hblist.append([Atom1,Atom2])
+
+    print ()
+    print ("Polar contacts")
+    print ('{:13} ({:4}, {:6}) {:13} ({:4}, {:6}) {:6} {:6} {:6}'.format(
+            'Atom1','Type','Charge','Atom2','type','charge','Dist (A)','ElecInt', 'VdWInt', 'total (kcal/mol)')
+    )
+    for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
+        dist = hb[0].at-hb[1].at
+        eint = hb[0].electrInt(hb[1],diel,dist)
+        evdw = hb[0].vdwInt(hb[1],dist)
+        print ('{:14}({:>4}, {:6.3f}) {:14}({:>4}, {:6.3f}) {:6.3f}    {:6.3f} {:6.3f} {:6.3f}'.format(
+            hb[0].atid(),
+            hb[0].atType,
+            hb[0].charg,
+            hb[1].atid(),
+            hb[1].atType,
+            hb[1].charg,
+            dist, eint, evdw, eint + evdw
+            )
+        )
+        
     
 if __name__ == "__main__":
     main()
