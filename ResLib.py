@@ -21,11 +21,15 @@ class ResiduesDataLib():
         self.nres = len(self.RData)
         
     def getParams (self,resid,atid):
-        return self.RData[resid+':'+atid]
+        if resid+':'+atid in self.RData:
+            return self.RData[resid+':'+atid]
+        else:
+            print ("WARNING: atom not found in library (",resid+':'+atid,')')
+            return {}
     
 class Residue():
     def __init__(self,data):
         self.id     = data[0]+':'+data[1]
         self.atType = data[2]
-        self.charg    = float(data[3])
+        self.charg  = float(data[3])
         

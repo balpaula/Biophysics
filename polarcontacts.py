@@ -137,34 +137,54 @@ def main():
             if at1.get_parent().get_resname() in waternames \
                 or at2.get_parent().get_resname() in waternames:
                 continue
-        Atom1 = StructureWrapper.Atom(at1,1)
-        Atom1.addParams(rl.getParams(at1.get_parent().get_resname(),at1.id),ff.atTypes)
-        
-        Atom2 = StructureWrapper.Atom(at2,1)
-        Atom2.addParams(rl.getParams(at2.get_parent().get_resname(),at2.id),ff.atTypes)
+        Atom1 = StructureWrapper.Atom(
+            at1, 1, 
+            rl.getParams(at1.get_parent().get_resname(),at1.id),
+            ff.atTypes
+        )
+        Atom2 = StructureWrapper.Atom(
+            at2,1,
+            rl.getParams(at2.get_parent().get_resname(),at2.id),
+            ff.atTypes
+        )
         
         hblist.append([Atom1,Atom2])
 
     print ()
     print ("Polar contacts")
-    print ('{:13} ({:4}, {:6}) {:13} ({:4}, {:6}) {:6} {:6} {:6}'.format(
-            'Atom1','Type','Charge','Atom2','type','charge','Dist (A)','ElecInt', 'VdWInt', 'total (kcal/mol)')
+    print ('{:13} ({:4}, {:6}) {:13} ({:4}, {:6}) {:6} '.format(
+            'Atom1','Type','Charge','Atom2','type','charge','Dist (A)')
     )
     for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
-        dist = hb[0].at-hb[1].at
-        eint = hb[0].electrInt(hb[1],diel,dist)
-        evdw = hb[0].vdwInt(hb[1],dist)
-        print ('{:14}({:>4}, {:6.3f}) {:14}({:>4}, {:6.3f}) {:6.3f}    {:6.3f} {:6.3f} {:6.3f}'.format(
+        print ('{:14} {:14} {:6.3f} '.format(
             hb[0].atid(),
-            hb[0].atType,
-            hb[0].charg,
             hb[1].atid(),
-            hb[1].atType,
-            hb[1].charg,
-            dist, eint, evdw, eint + evdw
+            hb[0].at - hb[1].at
             )
         )
-        
+    print ()
+    print ("Residue interactions")
+    
+    # make list of Residue pairs
+    resList = []
+    for hb in hblist:
+        r1 = StructureWrapper.Residue(hb[0].at.get_parent(),1, ff, rl)
+        r2 = StructureWrapper.Residue(hb[1].at.get_parent(),1, ff, rl)
+        if [r1,r2] not in resList:
+            resList.append([r1,r2])
+    
+    for rpair in sorted(resList, key=lambda i: i[0].resNum()):
+        eint = rpair[0].electrInt(rpair[1],diel)
+        evdw = rpair[0].vdwInt(rpair[1])
+        print (
+            '{:10} {:10} {: 8.4f} {: 8.4f} {: 8.4f}'.format(
+                rpair[0].resid(), 
+                rpair[1].resid(),
+                eint,
+                evdw,
+                eint+evdw)
+        )
+
     
 if __name__ == "__main__":
     main()

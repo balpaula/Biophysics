@@ -21,11 +21,19 @@ class Residue():
         'THR':'T', 'VAL':'V', 'TRP':'W', 'TYR':'Y'
     }  
 
-    def __init__(self, r, useChains=False, rdata={}):
+    def __init__(self, r, useChains=False, ff='', rl=''):
         self.residue = r
-        self.useChains = useChains
-        self.rdata = rdata
-    
+        self.useChains = useChains       
+        self.atoms = {}
+        if ff:
+            for at in r.get_atoms():
+                newat = Atom(
+                    at, 1, 
+                    rl.getParams(r.get_resname(),at.id),
+                    ff.atTypes
+                )
+                self.atoms[newat.at.id] = newat
+        
     def resid(self, compact=False):
         if self.useChains:
             ch = ":"+self.residue.get_parent().id
@@ -69,30 +77,46 @@ class Residue():
     
     def __str__(self):
         return self.resid()
-            
+    
+    def electrInt (self, other, diel):
+        eint = 0.
+        for at1 in self.atoms:
+            for at2 in other.atoms:
+                r = self.atoms[at1].at-other.atoms[at2].at
+                eint = eint + self.atoms[at1].electrInt(other.atoms[at2],diel,r)
+        return eint
+    
+    def vdwInt(self,other):
+        evdw = 0.
+        for at1 in self.atoms:
+            for at2 in other.atoms:
+                r = self.atoms[at1].at-other.atoms[at2].at
+                evdw = evdw + self.atoms[at1].vdwInt(other.atoms[at2],r)
+        return evdw
 
 class Atom():
-    def __init__ (self,at,useChains=False):
-         self.at=at
-         self.useChains=useChains
-         self.atType=''
-         self.rvdw=0.
-         self.sig=0.
-         self.eps=0.
-         self.mass=0.
-         self.fsrf=0.
-         self.charg = 0
-    
-    def addParams(self,atData,atTypeData):
-        self.atType = atData.atType
-        self.rvdw   = atTypeData[self.atType].rvdw
-        self.avdw   = atTypeData[self.atType].avdw
-        self.cvdw   = atTypeData[self.atType].cvdw
-        self.sig    = atTypeData[self.atType].sig
-        self.eps    = atTypeData[self.atType].eps
-        self.mass   = atTypeData[self.atType].mass
-        self.fsrf   = atTypeData[self.atType].fsrf
-        self.charg  = atData.charg
+    def __init__ (self, at, useChains=False, atData={}, atTypeData={}):
+        self.at=at
+        self.useChains=useChains
+        self.atType = ''
+        self.rvdw   = 0.
+        self.avdw   = 0.
+        self.cvdw   = 0.
+        self.sig    = 0.
+        self.eps    = 0.
+        self.mass   = 0.
+        self.fsrf   = 0.
+        self.charg  = 0.
+        if atData:
+            self.atType = atData.atType
+            self.rvdw   = atTypeData[self.atType].rvdw
+            self.avdw   = atTypeData[self.atType].avdw
+            self.cvdw   = atTypeData[self.atType].cvdw
+            self.sig    = atTypeData[self.atType].sig
+            self.eps    = atTypeData[self.atType].eps
+            self.mass   = atTypeData[self.atType].mass
+            self.fsrf   = atTypeData[self.atType].fsrf
+            self.charg  = atData.charg
         
     def atid(self, compact=False):
         return self.resid(compact)+"."+self.at.id
@@ -116,6 +140,4 @@ class Atom():
         return 332.16 * self.charg * other.charg / diel / r
     
     def vdwInt (self, other,r):
-        return (
-            self.avdw*other.avdw/r**12 \
-            - self.cvdw*other.cvdw)/r**6
+        return self.avdw*other.avdw/r**12 - self.cvdw*other.cvdw/r**6
