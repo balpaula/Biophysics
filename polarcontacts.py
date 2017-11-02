@@ -185,19 +185,20 @@ def main():
     for at1, at2 in nbsearch.search_all(HBLNK):
         if at1.get_parent() == at2.get_parent():
             continue
-        if at1.get_serial_number() > at2.get_serial_number():
-            continue
-#Discard covalents and neighbours
+ #Discard covalents and neighbours
         if (at1-at2) < COVLNK:
             continue
-        if at2.get_parent().id[1] - at1.get_parent().id[1] == 1:
+        if abs(at2.get_parent().id[1] - at1.get_parent().id[1]) == 1:
             continue
 # remove waters
         if nowats:
             if at1.get_parent().get_resname() in waternames \
                 or at2.get_parent().get_resname() in waternames:
                 continue
-        hblist.append([Atom(at1,1),Atom(at2,1)])
+        if at1.get_serial_number() < at2.get_serial_number():
+            hblist.append([Atom(at1,1),Atom(at2,1)])
+        else:
+            hblist.append([Atom(at2,1),Atom(at1,1)])
     for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
         print ('{:14} {:14} {:6.2f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
         
