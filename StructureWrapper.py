@@ -1,4 +1,7 @@
-#Appropriate wrappers over BioPython classes
+#
+# Convenient wrappers over BioPython classes
+# Include interaction energies
+#
 
 __author__ = "gelpi"
 __date__ = "$01-nov-2017 7:17:33$"
@@ -20,8 +23,8 @@ class Residue():
 
     def __init__(self, r, useChains=False):
         self.residue = r
-        self.useChains = useChains
-    
+        self.useChains = useChains       
+        
     def resid(self, compact=False):
         if self.useChains:
             ch = ":"+self.residue.get_parent().id
@@ -65,13 +68,12 @@ class Residue():
     
     def __str__(self):
         return self.resid()
-            
-
-class Atom():
-    def __init__ (self,at,useChains=False):
-         self.at=at
-         self.useChains=useChains
     
+class Atom():
+    def __init__ (self, at, useChains=False):
+        self.at=at
+        self.useChains=useChains
+        
     def atid(self, compact=False):
         return self.resid(compact)+"."+self.at.id
     
@@ -89,4 +91,3 @@ class Atom():
     
     def __str__(self):
         return self.atid()
-
