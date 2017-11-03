@@ -9,7 +9,7 @@ __date__ = "$29-ago-2017 16:14:26$"
 from Bio.PDB.NeighborSearch import NeighborSearch
 from Bio.PDB.PDBParser import PDBParser
 
-import StructureWrappers
+import StructureWrapper
 
 import os
 import sys
@@ -34,18 +34,12 @@ def main():
             )
 
     parser.add_argument(
-        '--debug', '-d', 
-        action='store_true', 
-        dest='debug',
-        help='Produce DEBUG output'
-    )
-    
-    parser.add_argument(
         '--backonly', 
         action='store_true', 
         dest='backonly',
         help='Restrict to backbone'
     )
+
     parser.add_argument(
         '--nowats', 
         action='store_true', 
@@ -57,7 +51,11 @@ def main():
     
     args = parser.parse_args()
     
-    debug = args.debug
+    print ("Settings")
+    print ("--------")
+    for k,v in vars(args).items():
+        print ('{:10}:'.format(k),v)
+    
     backonly = args.backonly
     nowats =args.nowats
     pdb_path = args.pdb_path
@@ -111,11 +109,19 @@ def main():
             hblist.append([Atom(at1,1),Atom(at2,1)])
         else:
             hblist.append([Atom(at2,1),Atom(at1,1)])
+
+    print ()
+    print ("Polar contacts")
+    print ('{:13} ({:4}, {:6}) {:13} ({:4}, {:6}) {:6} '.format(
+            'Atom1','Type','Charge','Atom2','type','charge','Dist (A)')
+    )
     for hb in sorted (hblist,key=lambda i: i[0].at.get_serial_number()):
-        print ('{:14} {:14} {:6.2f}'.format(hb[0].atid(),hb[1].atid(),(hb[0].at-hb[1].at)))
-        
-    
-    
+        print ('{:14} {:14} {:6.3f} '.format(
+            hb[0].atid(),
+            hb[1].atid(),
+            hb[0].at - hb[1].at
+            )
+        )
     
 if __name__ == "__main__":
     main()
