@@ -3,7 +3,7 @@
 # Attypes and partial charges
 # data from CMIP reslib formatted file
 #
-
+import sys
 class ResiduesDataLib():
     def __init__(self,fname):
         self.RData={}
