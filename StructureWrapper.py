@@ -1,6 +1,6 @@
 #
 # Convenient wrappers over BioPython classes
-# Include interaction energies
+# Hint: Include here interaction energies
 #
 
 __author__ = "gelpi"
