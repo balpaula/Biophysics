@@ -54,20 +54,20 @@ class Particle():
     def __eq__(self,other):
         return self.x == other.x and self.y == other.y and self.z == other.z
 
-if __name__ == "__main__":
-    sys = System(3.8)
-    [evdw,eint] = sys.calcEnergy()
-    print ("Evdw=", evdw)
-    p0 = Particle(0,0,0,0)
-    evdw0 = 0
-    for pi in sys.parts:
-        if pi != p0:
-            evdw0 = evdw0 + p0.vdwInt(pi,sys.d)
-    print ("Evdw=", evdw-evdw0)
-    for pi in sys.parts:
-        pi.c = 1.
-    (evdw1,eint1) = sys.calcEnergy()
-    print (evdw/eint1)
+#if __name__ == "__main__":
+sys = System(3.8)
+[evdw,eint] = sys.calcEnergy()
+print ("Evdw=", evdw)
+p0 = Particle(0,0,0,0)
+evdw0 = 0
+for pi in sys.parts:
+    if pi != p0:
+        evdw0 = evdw0 + p0.vdwInt(pi,sys.d)
+print ("Evdw=", evdw-evdw0)
+for pi in sys.parts:
+    pi.c = 1.
+(evdw1,eint1) = sys.calcEnergy()
+print (evdw/eint1)
     
     
     
