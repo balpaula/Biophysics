@@ -11,3 +11,7 @@ Dependencies
 
     Bio.PDB.NeighborSearch (BioPython)
     Bio.PDB.PDBParser (Biopython)
+
+
+## prob217.py
+Simple script to solve Exercise 7 form 2.1 collection
