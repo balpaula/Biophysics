@@ -39,23 +39,23 @@ class Residue():
         return self.residue.id[1]
 
     def _getOneLetterResidueCode(self):
-        id = self.residue.get_resname().rstrip().lstrip()
-        if not id in Residue.oneLetterResidueCode:
+        resid = self.residue.get_resname().rstrip().lstrip()
+        if not resid in Residue.oneLetterResidueCode:
             return 'X'
         else:
-            return Residue.oneLetterResidueCode[id]
+            return Residue.oneLetterResidueCode[resid]
 
     def __hash__(self):
         return hash(self.resid())
 
     def __eq__(self, other):
         if self.useChains:
-            id = self.residue.get_parent().id + str(self.residue.id[1])
+            resid = self.residue.get_parent().id + str(self.residue.id[1])
             otherid = other.residue.get_parent().id + str(other.residue.id[1])
         else:
-            id = self.residue.id[1]
+            resid = self.residue.id[1]
             otherid = other.residue.id[1]
-        return id == otherid
+        return resid == otherid
 
     def __lt__(self, other):
         if self.useChains:

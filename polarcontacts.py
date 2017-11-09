@@ -11,7 +11,6 @@ from Bio.PDB.PDBParser import PDBParser
 
 import StructureWrapper
 
-import os
 import sys
 import argparse
 

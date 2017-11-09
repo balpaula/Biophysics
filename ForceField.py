@@ -3,7 +3,6 @@
 # uses modified CMIP vdwprm file
 #
 import sys
-import math
 
 class VdwParamset():
     def __init__ (self, fname):
