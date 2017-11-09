@@ -20,7 +20,7 @@ class VdwParamset():
             self.atTypes[data[0]]=AtType(data)
         self.ntypes = len(self.atTypes)
         fh.close()
- 
+
 class AtType():
     def __init__(self,data):
         self.id   = data[0]
@@ -30,5 +30,5 @@ class AtType():
         self.fsrf = float(data[4])
         self.rvdw = self.sig * 0.5612
 
-        
+
 
