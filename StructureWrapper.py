@@ -36,7 +36,11 @@ class Residue():
             return self.residue.get_resname() + ch + ':'+ str(self.residue.id[1])
 
     def resNum(self):
-        return self.residue.id[1]
+        if self.useChains:
+            resnum = self.residue.get_parent().id + str(self.residue.id[1])
+        else:
+            resnum = self.residue.id[1]
+        return resnum
 
     def _getOneLetterResidueCode(self):
         resid = self.residue.get_resname().rstrip().lstrip()
@@ -49,26 +53,14 @@ class Residue():
         return hash(self.resid())
 
     def __eq__(self, other):
-        if self.useChains:
-            resid = self.residue.get_parent().id + str(self.residue.id[1])
-            otherid = other.residue.get_parent().id + str(other.residue.id[1])
-        else:
-            resid = self.residue.id[1]
-            otherid = other.residue.id[1]
-        return resid == otherid
+        return self.resid() == other.resid()
 
     def __lt__(self, other):
-        if self.useChains:
-            id = self.residue.get_parent().id + str(self.residue.id[1])
-            otherid = other.residue.get_parent().id + str(other.residue.id[1])
-        else:
-            id = self.residue.id[1]
-            otherid = other.residue.id[1]
-        return id < otherid
+        return self.resnum() < self.resnum()
 
     def __str__(self):
         return self.resid()
-
+    
 class Atom():
     def __init__ (self, at, useChains=False):
         self.at=at
