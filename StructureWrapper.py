@@ -79,7 +79,7 @@ class Atom():
         return Residue(self.at.get_parent(),self.useChains)._getOneLetterResidueCode()+'.'+self.at.id
 
     def __lt__(self,other):
-        return self.at.get_serial_number()
+        return self.at.get_serial_number()<other.at.get_serial_number()
 
     def __str__(self):
         return self.atid()
