@@ -60,7 +60,7 @@ class Residue():
 
     def __str__(self):
         return self.resid()
-    
+
 class Atom():
     def __init__ (self, at, useChains=False):
         self.at=at
