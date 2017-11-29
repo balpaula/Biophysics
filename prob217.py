@@ -28,8 +28,8 @@ class System():
             for p2 in sys.parts:
                 if p1 == p2:
                     continue
-                eint = eint + p1.elecInt(p2, self.d)
-                evdw = evdw + p1.vdwInt(p2, self.d)
+                eint = eint + 0.5*p1.elecInt(p2, self.d)
+                evdw = evdw + 0.5*p1.vdwInt(p2, self.d)
         return [evdw, eint]
 
 
@@ -58,16 +58,25 @@ class Particle():
 sys = System(3.8)
 [evdw, eint] = sys.calcEnergy()
 print ("Evdw=", evdw)
+#Removing central particle
 p0 = Particle(0, 0, 0, 0)
 evdw0 = 0
 for pi in sys.parts:
     if pi != p0:
         evdw0 = evdw0 + p0.vdwInt(pi, sys.d)
-print ("Evdw=", evdw-evdw0)
+print ("New Evdw=", evdw-evdw0)
+#Electrostatics, equal positive charge
 for pi in sys.parts:
     pi.c = 1.
 (evdw1, eint1) = sys.calcEnergy()
-print (evdw / eint1)
-
-
+print ("Charge to equilibrate: ",math.sqrt(-evdw / eint1))
+# Negative in central particle
+ecen=0.
+p0.c=1.
+for pi in sys.parts:
+#    pi.c=1.0
+    if pi != p0:
+        ecen = ecen +  p0.elecInt(pi,sys.d)
+neweint = eint1 - 2. * ecen
+print ("Centrl neg to compensate: ", math.sqrt(-evdw/neweint))
 
