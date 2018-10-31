@@ -12,9 +12,9 @@ EPS = 0.09
 
 
 class System():
-    
+
     """Represents the ensemble of particles"""
-    
+
     def __init__(self, dmin):
         """Generates a regular lattice of 3x3x3 particles in internal coordinates separated by dmin"""
         self.parts = []
@@ -28,8 +28,8 @@ class System():
         """Calculates vdw + elec energy for the whole system"""
         eint = 0.
         evdw = 0.
-        for p1 in sys.parts:
-            for p2 in sys.parts:
+        for p1 in self.parts:
+            for p2 in self.parts:
                 if p1 == p2:
                     continue
                 eint = eint + 0.5 * p1.elec_interaction(p2, self.d)
