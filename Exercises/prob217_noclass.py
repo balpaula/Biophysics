@@ -23,15 +23,6 @@ def calc_energy(sys):
             evdw = evdw + 0.5 * vdw_interaction(p1, p2, sys['d'])
     return [evdw, eint]
 
-
-class Particle():
-    """ A single particle,has coordinates (in internal units) and charge (in e) """
-    def __init__(self, x, y, z, c):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.c = c
-
 def distance(p1,p2):
     """Evaluates Sqrt[(x0-x1)2 +(y0-y1)2 + (z0-z1)2]"""
     return math.sqrt((p1[0]-p2[0]) ** 2 + (p1[1]-p2[1]) ** 2 + (p1[2]-p2[2]) ** 2)
@@ -46,6 +37,7 @@ def elec_interaction(p1,p2, dmin):
     d = distance(p1,p2) * dmin
     return 332.16 * p1[3] * p2[3] / d
 
+# MAIN 
 
 sys = {'parts': [], 'd' : dmin}
 
