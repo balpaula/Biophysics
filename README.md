@@ -14,8 +14,7 @@ Simple vdw parameters (based on AMBER ff)
 ## data/aaLib.lib
 Library for obtaining amino acid atom types and partial charges (based on AMBER ff)
 
-
-##ala_scanning_base.py
+## ala_scanning_base.py
 Base script for Ala Scanning exercise
 
 
