@@ -10,8 +10,6 @@ from Bio.PDB.NACCESS import NACCESS_atomic
 from forcefield import VdwParamset
 from residue_library import ResiduesDataLib
 
-backbone_atoms=['N','C','CA','O','HA','NH']
-
 # MAIN
 
 # Check that the number of paramters, and send warning in none
@@ -34,20 +32,17 @@ residue_library = ResiduesDataLib('data/aaLib.lib')
 ff_params = VdwParamset('data/vdwprm')
 
 # assign data types, and charges
-total_charge=0
 for at in st.get_atoms():
     resname = at.get_parent().get_resname()
     params = residue_library.get_params(resname,at.id)
     if not params:
         sys.exit(1)
-    at.atom_type = params.at_type
-    at.charge = params.charge
-    at.vdw = ff_params.at_types[at.atom_type]
-print ("Total Charge: ",total_charge)
+    at.xtra['atom_type'] = params.at_type
+    at.xtra['charge'] = params.charge
+    at.xtra['vdw'] = ff_params.at_types[at.atom_type]
 
 # Calculating surfaces
-#srf = NACCESS_atomic(st[0],naccess_binary ='PATH_TO_NACCESS' )
-srf = NACCESS_atomic(st[0],naccess_binary ='/home/gelpi/DEVEL/BioPhysics/soft/NACCESS/naccess' )
+srf = NACCESS_atomic(st[0],naccess_binary ='PATH_TO_NACCESS' )
 
 # Calculating res-res interaction energy
 # Reference values for WT
