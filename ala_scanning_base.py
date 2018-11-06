@@ -6,6 +6,7 @@
 import sys
 import math
 from Bio.PDB.PDBParser import PDBParser
+from Bio.PDB.NACCESS import NACCESS_atomic
 from forcefield import VdwParamset
 from residue_library import ResiduesDataLib
 
@@ -43,6 +44,10 @@ for at in st.get_atoms():
     at.charge = params.charge
     at.vdw = ff_params.at_types[at.atom_type]
 print ("Total Charge: ",total_charge)
+
+# Calculating surfaces
+#srf = NACCESS_atomic(st[0],naccess_binary ='PATH_TO_NACCESS' )
+srf = NACCESS_atomic(st[0],naccess_binary ='/home/gelpi/DEVEL/BioPhysics/soft/NACCESS/naccess' )
 
 # Calculating res-res interaction energy
 # Reference values for WT
