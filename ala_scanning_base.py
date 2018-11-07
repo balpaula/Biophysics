@@ -44,6 +44,3 @@ for at in st.get_atoms():
 # Calculating surfaces
 srf = NACCESS_atomic(st[0],naccess_binary ='PATH_TO_NACCESS' )
 
-# Calculating res-res interaction energy
-# Reference values for WT
-# Ala scanning DDG is the negative of interaction energies of side chain atoms except CB
