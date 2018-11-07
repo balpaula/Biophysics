@@ -314,7 +314,7 @@ ASP  HB1  H     -0.0122
 ASP  HB2  H     -0.0122
 ASP  HB3  H     -0.0122
 ASP  CG   C      0.7994
-ASP  OD1  OC
+ASP  OD1  OC    -0.8014
 ASP  OD2  OC    -0.8014
 ASP  C    C      0.5366
 ASP  O    O     -0.5819
