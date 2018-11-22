@@ -39,7 +39,7 @@ for at in st.get_atoms():
         sys.exit(1)
     at.xtra['atom_type'] = params.at_type
     at.xtra['charge'] = params.charge
-    at.xtra['vdw'] = ff_params.at_types[at.atom_type]
+    at.xtra['vdw'] = ff_params.at_types[at.xtra['atom_type']]
 
 # Calculating surfaces
 srf = NACCESS_atomic(st[0],naccess_binary ='PATH_TO_NACCESS' )
